@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "chrome",
+            "name": "https://gift-cards.phorest.com/__/#/specs/runner?file=cypress/e2e/voucher_purchase.cy.js",
+            "request": "launch",
+            "url": "https://gift-cards.phorest.com/__/#/specs/runner?file=cypress/e2e/voucher_purchase.cy.js"
+        }
+    ]
+}
