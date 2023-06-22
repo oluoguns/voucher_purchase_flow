@@ -1,5 +1,9 @@
+// Import the Mailosaur library
+const MailosaurClient = require('mailosaur');
+const mailosaur = new MailosaurClient('pNaQKkLjJfwcptrFqvbnSX0gwYZfvcfk');
+
 describe("Voucher Purchase Flow", () => {
-  it("Should successfully purchase a voucher", () => {
+  it("Should successfully purchase a voucher and verify email confirmation", () => {
     // Visit the demo salon page
     cy.visit("https://gift-cards.phorest.com/salons/demous#");
 
@@ -44,19 +48,21 @@ describe("Voucher Purchase Flow", () => {
     // Wait for the payment details to be entered manually
     cy.pause();
 
+    // Manually enter the payment details through the Cypress interface
+    cy.log("Please enter the payment details manually in the Cypress interface");
 
-    /* I've had to do this next part manually because I can't find the element 
+    // Wait for the payment details to be entered manually
+    cy.pause();
+ 
+   /* I've had to do this next part manually because I can't find the element 
     selectors (Potential bug?) to fill out the Payment Details field */
 
-    // Assert the entered payment details before submitting
-    cy.get('input[name="checkout[cardholder_name]"]').should('have.value', 'John Doe');
-    cy.get('input[data-target="checkout.zipCodeInput"]').should('have.value', '92606');
-    cy.get('input[data-target="checkout.cardNumberInput"]').should('have.value', '4111 1111 1111 1111');
-    cy.get('input[data-target="checkout.expirationInput"]').should('have.value', '12/23');
-    cy.get('input[data-target="checkout.securityCodeInput"]').should('have.value', '999');
+    // Wait for the payment details to be entered manually
+    cy.log("Please enter the payment details manually in the Cypress interface");
+    cy.pause();
 
     // Click the Submit button manually in the Cypress interface
-
+    
     // Assert that the "Purchase Complete" message is displayed
     cy.get('body > div.flex.flex-col.h-full > header > span').should('contain', 'Purchase Complete');
 
@@ -64,27 +70,77 @@ describe("Voucher Purchase Flow", () => {
     cy.get('body > div.flex.flex-col.h-full > div > div > div.container.my-4.text-center > p.text-xl.font-medium.mb-8')
       .should('contain', 'Payment accepted, thank you!');
 
-    // Assert that the gift card and receipt sent message is displayed
-    cy.get('body > div.flex.flex-col.h-full > div > div > div.container.my-4.text-center > p:nth-child(3)')
-      .should('contain', 'Your gift card has been sent. We\'ve also sent you a receipt.');
+// Retrieve the email from Mailosaur using the message ID or search criteria
+mailosaur.messages.get('qlygy2tu', { sentTo: 'dollar-noted@qlygy2tu.mailosaur.net' }).then((email) => {
+  // Assert that the email is not null
+  expect(email).not.to.be.null;
 
-// Click the "Done" button with a slight delay
-cy.wait(2000); // Adjust the delay time as needed
-cy.get('body > div.flex.flex-col.h-full > div > div > div.container.mb-10 > button')
-  .click();
+  // Assert the email content, subject, or other details
+  expect(email.subject).to.contain('Voucher Purchase Confirmation');
+  expect(email.html.body).to.contain('Thank you for purchasing a voucher.');
 
-    // Assert that the user is back on the home page
-    cy.url().should('eq', 'https://gift-cards.phorest.com/salons/demous#');
+  // Continue with other assertions or actions related to the email
 
+  // Visit the Mailosaur website to verify email confirmation
+  cy.visit('https://mailosaur.com/app/servers/qlygy2tu/get-started');
+
+  // Perform actions on the Mailosaur website using Cypress commands and element selectors
+  cy.get('#email-list').should('be.visible');
+  cy.get('#search-input').type('Voucher Purchase Confirmation');
+  cy.get('#search-button').click();
+      
+
+    // Click the "Done" button with a slight delay
+    cy.wait(2000); // Adjust the delay time as needed
+    cy.get('body > div.flex.flex-col.h-full > div > div > div.container.mb-10 > button').click();
+
+    // End the test and stop further execution
     cy.pause();
+  
+  }); 
+  }); 
 
-  });
 });
 
+
+
+/*
+// Assert that the Checkout page is displayed
+cy.get('span[data-target="page.headerText"]').should('contain', 'Checkout');
+
+// Log a message to enter payment details manually
+cy.log("Please enter the payment details manually in the Cypress interface");
+
+// Pause the test and wait for payment details to be entered manually
+cy.pause();
+
+// After payment details are entered manually, we can proceed to verify email confirmation
+
+// Verify that the email has been received on the email service (e.g., Mailosaur)
+// You will need to replace 'EMAIL_SERVICE_API_KEY' and 'EMAIL_RECEIPT_IDENTIFIER' with appropriate values
+cy.request({
+  method: 'GET',
+  url: 'https://api.mailosaur.com/api/messages/search',
+  auth: {
+    username: 'EMAIL_SERVICE_API_KEY',
+    password: ''
+  },
+  qs: {
+    sentTo: 'EMAIL_RECEIPT_IDENTIFIER'
+  }
+}).then((response) => {
+  // Assert that the email has been received
+  expect(response.status).to.equal(200);
+  expect(response.body.items).to.have.lengthOf.at.least(1);
+
+  // Click the "Done" button with a slight delay
+  cy.wait(2000); // Adjust the delay time as needed
+  cy.get('body > div.flex.flex-col.h-full > div > div > div.container.mb-10 > button').click();
+
+  // Assert that the user is back on the home page
+  cy.url().should('eq', 'https://gift-cards.phorest.com/salons/demous#');
+});
+*/
  
-
-
-
-
 
 
