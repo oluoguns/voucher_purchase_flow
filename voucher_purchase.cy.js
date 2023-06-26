@@ -51,8 +51,9 @@ describe("Voucher Purchase Flow", () => {
       // Wait for the payment details to be entered manually
       cy.pause(15000);
     
-      /* Once details have been entered and the Submit button has been clicked, manually resume 
-         the test to by clicking on the 'Resume' button to continue running the test 
+      /* Once details have been entered and the Submit button has been clicked, wait for
+      Payment page to load up and manually resume the test to by clicking on the 'Resume' button 
+      to continue running the test 
       */
       
 
@@ -71,5 +72,6 @@ describe("Voucher Purchase Flow", () => {
     
     });
   });
+
 
   
